@@ -79,6 +79,22 @@ namespace MavericksBank.Services.Implementation
                 _logger.LogWarning("Transaction failed. One or both accounts not found.");
                 throw new Exception("Account not found.");
             }
+            if (fromAccount.AccountId == toAccount.AccountId)
+            {
+                _logger.LogWarning(
+                    "Transaction failed. Sender and receiver accounts are the same. AccountId: {AccountId}",
+                    fromAccount.AccountId);
+
+                throw new Exception("You cannot transfer money to your own account.");
+            }
+            if (dto.Amount <= 0)
+            {
+                throw new Exception("Transfer amount must be greater than zero.");
+            }
+            if (!toAccount.IsActive)
+            {
+                throw new Exception("Receiver account is inactive.");
+            }
 
             if (fromAccount.Balance < dto.Amount)
             {

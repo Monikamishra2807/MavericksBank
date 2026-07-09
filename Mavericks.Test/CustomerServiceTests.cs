@@ -5,7 +5,6 @@ using MavericksBank.Services.Implementation;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
-using System.Timers;
 
 namespace MavericksBank.Tests.Services
 {
@@ -38,7 +37,15 @@ namespace MavericksBank.Tests.Services
                     Address = "Chennai",
                     DOB = new DateTime(2002,5,20),
                     AadharNumber = "123456789012",
-                    PanNumber = "ABCDE1234F"
+                    PanNumber = "ABCDE1234F",
+
+                    User = new User
+                    {
+                        UserId = 10,
+                        FullName = "Monika Mishra",
+                        Email = "monika@gmail.com",
+                        Mobile = "9876543210"
+                    }
                 }
             };
 
@@ -51,6 +58,12 @@ namespace MavericksBank.Tests.Services
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count(), Is.EqualTo(1));
+
+            var customer = result.First();
+
+            Assert.That(customer.FullName, Is.EqualTo("Monika Mishra"));
+            Assert.That(customer.Email, Is.EqualTo("monika@gmail.com"));
+            Assert.That(customer.Mobile, Is.EqualTo("9876543210"));
         }
 
         [Test]
@@ -64,7 +77,15 @@ namespace MavericksBank.Tests.Services
                 Address = "Chennai",
                 DOB = new DateTime(2002, 5, 20),
                 AadharNumber = "123456789012",
-                PanNumber = "ABCDE1234F"
+                PanNumber = "ABCDE1234F",
+
+                User = new User
+                {
+                    UserId = 10,
+                    FullName = "Monika Mishra",
+                    Email = "monika@gmail.com",
+                    Mobile = "9876543210"
+                }
             };
 
             _repository.Setup(x => x.GetCustomerByIdAsync(1))
@@ -76,6 +97,9 @@ namespace MavericksBank.Tests.Services
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.CustomerId, Is.EqualTo(1));
+            Assert.That(result.FullName, Is.EqualTo("Monika Mishra"));
+            Assert.That(result.Email, Is.EqualTo("monika@gmail.com"));
+            Assert.That(result.Mobile, Is.EqualTo("9876543210"));
         }
 
         [Test]
@@ -110,7 +134,15 @@ namespace MavericksBank.Tests.Services
                 Address = "Old Address",
                 DOB = new DateTime(2002, 1, 1),
                 AadharNumber = "123456789012",
-                PanNumber = "ABCDE1234F"
+                PanNumber = "ABCDE1234F",
+
+                User = new User
+                {
+                    UserId = 10,
+                    FullName = "Monika Mishra",
+                    Email = "monika@gmail.com",
+                    Mobile = "9876543210"
+                }
             };
 
             var dto = new CustomerDto
@@ -152,7 +184,15 @@ namespace MavericksBank.Tests.Services
             // Arrange
             var customer = new Customer
             {
-                CustomerId = 1
+                CustomerId = 1,
+
+                User = new User
+                {
+                    UserId = 10,
+                    FullName = "Monika Mishra",
+                    Email = "monika@gmail.com",
+                    Mobile = "9876543210"
+                }
             };
 
             _repository.Setup(x => x.GetCustomerByIdAsync(1))
