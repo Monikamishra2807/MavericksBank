@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../Mavericks.Test/MavericksBank.Test.csproj" Id="a7dab17b-5494-4ef5-b093-65d5d2da4862" />
+  <Project Path="MavericksBank.csproj" />
+</Solution>

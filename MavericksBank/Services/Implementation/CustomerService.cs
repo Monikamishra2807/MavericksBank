@@ -28,6 +28,9 @@ namespace MavericksBank.Services.Implementation
             {
                 CustomerId = c.CustomerId,
                 UserId = c.UserId,
+                FullName = c.User.FullName,
+                Email = c.User.Email,
+                Mobile = c.User.Mobile,
                 Address = c.Address,
                 DOB = c.DOB,
                 AadharNumber = c.AadharNumber,
@@ -51,6 +54,32 @@ namespace MavericksBank.Services.Implementation
             {
                 CustomerId = customer.CustomerId,
                 UserId = customer.UserId,
+                FullName = customer.User.FullName,
+                Email = customer.User.Email,
+                Mobile = customer.User.Mobile,
+                Address = customer.Address,
+                DOB = customer.DOB,
+                AadharNumber = customer.AadharNumber,
+                PanNumber = customer.PanNumber
+            };
+        }
+
+        public async Task<CustomerDto?> GetCustomerByUserIdAsync(int userId)
+        {
+            var customer = await _repository.GetCustomerByUserIdAsync(userId);
+
+            if (customer == null)
+            {
+                return null;
+            }
+
+            return new CustomerDto
+            {
+                CustomerId = customer.CustomerId,
+                UserId = customer.UserId,
+                FullName = customer.User.FullName,
+                Email = customer.User.Email,
+                Mobile = customer.User.Mobile,
                 Address = customer.Address,
                 DOB = customer.DOB,
                 AadharNumber = customer.AadharNumber,

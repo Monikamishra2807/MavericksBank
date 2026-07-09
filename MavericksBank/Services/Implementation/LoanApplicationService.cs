@@ -8,13 +8,16 @@ namespace MavericksBank.Services.Implementation
     public class LoanApplicationService : ILoanApplicationService
     {
         private readonly ILoanApplicationRepository _repository;
+        private readonly ILoanRepository _loanRepository;
         private readonly ILogger<LoanApplicationService> _logger;
 
         public LoanApplicationService(
             ILoanApplicationRepository repository,
+            ILoanRepository loanRepository,
             ILogger<LoanApplicationService> logger)
         {
             _repository = repository;
+            _loanRepository = loanRepository;
             _logger = logger;
         }
 
@@ -58,6 +61,20 @@ namespace MavericksBank.Services.Implementation
 
         public async Task CreateLoanApplicationAsync(LoanApplicationDto dto)
         {
+            // Check whether the selected loan exists
+            var loan = await _loanRepository.GetLoanByIdAsync(dto.LoanId);
+
+            if (loan == null)
+            {
+                throw new Exception("Selected loan does not exist.");
+            }
+
+            // Validate requested amount
+            if (dto.RequestedAmount > loan.MaximumAmount)
+            {
+                throw new Exception($"Requested amount cannot exceed ₹{loan.MaximumAmount:N0}.");
+            }
+
             var application = new LoanApplication
             {
                 CustomerId = dto.CustomerId,

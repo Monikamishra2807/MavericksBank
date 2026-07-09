@@ -64,18 +64,68 @@ namespace MavericksBank.Services.Implementation
             };
         }
 
+        public async Task<AccountDto?> GetAccountByCustomerIdAsync(int customerId)
+        {
+            var account = await _repository.GetAccountByCustomerIdAsync(customerId);
+
+            if (account == null)
+            {
+                return null;
+            }
+
+            return new AccountDto
+            {
+                AccountId = account.AccountId,
+                CustomerId = account.CustomerId,
+                AccountNumber = account.AccountNumber,
+                AccountType = account.AccountType,
+                IFSCCode = account.IFSCCode,
+                BranchName = account.BranchName,
+                Balance = account.Balance,
+                Status = account.Status,
+                IsActive = account.IsActive
+            };
+        }
+        public async Task<AccountDto?> GetAccountByNumberAsync(string accountNumber)
+        {
+            var account = await _repository.GetAccountByNumberAsync(accountNumber);
+
+            if (account == null)
+                return null;
+
+            return new AccountDto
+            {
+                AccountId = account.AccountId,
+                CustomerId = account.CustomerId,
+                AccountNumber = account.AccountNumber,
+                AccountType = account.AccountType,
+                IFSCCode = account.IFSCCode,
+                BranchName = account.BranchName,
+                Balance = account.Balance,
+                Status = account.Status,
+                IsActive = account.IsActive
+            };
+        }
+
         public async Task CreateAccountAsync(AccountDto dto)
         {
+            var existingAccount = await _repository.GetAccountByCustomerIdAsync(dto.CustomerId);
+
+            if (existingAccount != null)
+            {
+                throw new Exception("Customer already has an account.");
+            }
+
             var account = new Account
             {
                 CustomerId = dto.CustomerId,
-                AccountNumber = dto.AccountNumber,
+                AccountNumber = "ACC" + Random.Shared.Next(10000000, 99999999),
                 AccountType = dto.AccountType,
-                IFSCCode = dto.IFSCCode,
-                BranchName = dto.BranchName,
+                IFSCCode = "MVBK0001234",
+                BranchName = "Coimbatore Main Branch",
                 Balance = dto.Balance,
-                Status = dto.Status,
-                IsActive = dto.IsActive
+                Status = "Active",
+                IsActive = true
             };
 
             await _repository.AddAsync(account);
@@ -85,6 +135,7 @@ namespace MavericksBank.Services.Implementation
                 "Account created successfully. Account Number: {AccountNumber}",
                 account.AccountNumber);
         }
+
 
         public async Task UpdateAccountAsync(int id, AccountDto dto)
         {
@@ -97,11 +148,7 @@ namespace MavericksBank.Services.Implementation
             }
 
             account.AccountType = dto.AccountType;
-            account.IFSCCode = dto.IFSCCode;
-            account.BranchName = dto.BranchName;
             account.Balance = dto.Balance;
-            account.Status = dto.Status;
-            account.IsActive = dto.IsActive;
 
             await _repository.UpdateAsync(account);
             await _repository.SaveChangesAsync();

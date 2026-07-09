@@ -62,7 +62,7 @@ namespace MavericksBank.Services.Implementation
             return "User registered successfully.";
         }
 
-        public async Task<string?> LoginAsync(LoginDto loginDto)
+        public async Task<LoginResponseDto?> LoginAsync(LoginDto loginDto)
         {
             _logger.LogInformation("Login attempt for Email: {Email}", loginDto.Email);
 
@@ -87,7 +87,12 @@ namespace MavericksBank.Services.Implementation
                 user.Email,
                 user.Role);
 
-            return GenerateToken(user);
+            return new LoginResponseDto
+            {
+                Token = GenerateToken(user),
+                Role = user.Role,
+                FullName = user.FullName
+            };
         }
 
         public string GenerateToken(User user)

@@ -33,12 +33,22 @@ namespace MavericksBank.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            var token = await _service.LoginAsync(loginDto);
-            if (token == null)
+            var response = await _service.LoginAsync(loginDto);
+            if (response == null)
             {
                 return Unauthorized("Invalid email or password.");
             }
-            return Ok(new { Token = token });
+            return Ok(response);
+        }
+        [Authorize]
+        [HttpGet("debug")]
+        public IActionResult Debug()
+        {
+            return Ok(User.Claims.Select(c => new
+            {
+                c.Type,
+                c.Value
+            }));
         }
     }
 }

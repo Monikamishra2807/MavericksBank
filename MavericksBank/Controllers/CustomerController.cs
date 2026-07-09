@@ -2,6 +2,7 @@
 using MavericksBank.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MavericksBank.Controllers
 {
@@ -35,11 +36,40 @@ namespace MavericksBank.Controllers
 
             return Ok(customer);
         }
+        [Authorize(Roles = "Customer")]
+        [HttpGet("MyProfile")]
+        public async Task<IActionResult> GetMyProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var customer = await _service.GetCustomerByUserIdAsync(int.Parse(userId));
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(customer);
+        }
 
         [Authorize(Roles = "Customer")]
         [HttpPost]
         public async Task<IActionResult> CreateCustomer(CustomerDto dto)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            dto.UserId = int.Parse(userId);
+
             await _service.CreateCustomerAsync(dto);
 
             return Ok(new

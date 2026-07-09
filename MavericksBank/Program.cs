@@ -25,6 +25,15 @@ namespace MavericksBank
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("ReactPolicy", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();   
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -96,7 +105,8 @@ namespace MavericksBank
                         ValidAudience = jwtSection["Audience"],
 
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(secret!))
+                            Encoding.UTF8.GetBytes(secret!)),
+                         RoleClaimType = System.Security.Claims.ClaimTypes.Role
                     };
                     options.Events = new JwtBearerEvents
                     {
@@ -120,8 +130,9 @@ namespace MavericksBank
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("ReactPolicy");
 
-             app.UseAuthentication();
+            app.UseAuthentication();
 
 
             app.UseAuthorization();

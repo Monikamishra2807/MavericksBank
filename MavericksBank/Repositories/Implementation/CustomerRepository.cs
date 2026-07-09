@@ -18,6 +18,13 @@ namespace MavericksBank.Repositories.Implementation
         public async Task<Customer?> GetCustomerByIdAsync(int Id)
         {
             return await _Context.Customers.Include(c => c.User).FirstOrDefaultAsync(c => c.CustomerId == Id);
+
+        }
+        public async Task<Customer?> GetCustomerByUserIdAsync(int userId)
+        {
+            return await _Context.Customers
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
         }
         public async Task AddAsync(Customer customer)
         {

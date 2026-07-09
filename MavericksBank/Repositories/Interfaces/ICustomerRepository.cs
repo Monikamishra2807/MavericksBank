@@ -6,6 +6,7 @@ namespace MavericksBank.Repositories.Interfaces
     {
         Task<IEnumerable<Customer>> GetAllCustomersAsync();
         Task<Customer?> GetCustomerByIdAsync(int Id);
+        Task<Customer?> GetCustomerByUserIdAsync(int userId);
         Task AddAsync(Customer customer);
         Task UpdateAsync(Customer customer);
         Task DeleteAsync(Customer customer);

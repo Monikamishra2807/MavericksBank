@@ -12,15 +12,18 @@ namespace MavericksBank.Test.Services
     public class LoanApplicationServiceTests
     {
         private Mock<ILoanApplicationRepository> _repository;
+        private Mock<ILoanRepository> _loanRepository;
         private LoanApplicationService _service;
 
         [SetUp]
         public void SetUp()
         {
             _repository = new Mock<ILoanApplicationRepository>();
+            _loanRepository = new Mock<ILoanRepository>();
 
             _service = new LoanApplicationService(
                 _repository.Object,
+                _loanRepository.Object,
                 NullLogger<LoanApplicationService>.Instance);
         }
 
@@ -78,6 +81,16 @@ namespace MavericksBank.Test.Services
                 LoanId = 1,
                 RequestedAmount = 500000
             };
+
+            _loanRepository.Setup(x => x.GetLoanByIdAsync(1))
+                           .ReturnsAsync(new Loan
+                           {
+                               LoanId = 1,
+                               LoanName = "Home Loan",
+                               MaximumAmount = 1000000,
+                               InterestRate = 8.5m,
+                               TenureInMonths = 240
+                           });
 
             await _service.CreateLoanApplicationAsync(dto);
 

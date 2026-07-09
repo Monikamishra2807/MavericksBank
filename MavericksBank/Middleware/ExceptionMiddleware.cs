@@ -21,16 +21,17 @@ namespace MavericksBank.Middleware
             catch (Exception ex)
             {
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
                 var response = new
                 {
-                    StatusCode = context.Response.StatusCode,
-                    Message = ex.Message
+                    statusCode = context.Response.StatusCode,
+                    message = ex.Message
                 };
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
+
         }
     }
 }
